@@ -46,6 +46,21 @@
     .over-budget-text { color: #dc2626 !important; }
     .in-progress { background: #2294c1 !important; }
     .divider { padding-bottom: 20px; margin-top: 50px; border-top: 2px solid #d7d7d7; }
+    .loader {
+  border: 10px solid #d9d9d9; /* Light grey */
+  border-top: 10px solid #3498db; /* Blue */
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  animation: spin 2s linear infinite;
+  margin: auto;
+  margin-top: 100px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
   </style>
 </head>
 <body>
@@ -56,12 +71,9 @@
     <span><a href="?isLastMonth=false">Ver mês atual</a></span>
     <br><br><br>
   </div>
-      <div id="divider" class="divider"></div>
+     <div id="loader-container"><div class="loader" id="loader"></div></div> 
     <div id="summary" class="summary"></div>
-          <div id="divider" class="divider"></div>
   <div id="categories" class="categories"></div>
-      <div id="divider" class="divider"></div>
-  <h2>Poupanças</h2>
   <div id="poupancas" class="categories"></div>
 
   <script>
@@ -93,12 +105,16 @@
       document.getElementById("page-title").textContent =
         `Gastos Grin | ${getMonthName(month)}`;
 
+      //Remove loader
+      const loaderDIV = document.getElementById("loader-container");
+      loaderDIV.innerHTML = "";
 
        // Render summary
       const summaryDiv = document.getElementById("summary");
       const percentage = (totalSpent / fromLastMonth) * 100;
       const isOverBudget = percentage > 100;
       summaryDiv.innerHTML = `
+       <div id="divider" class="divider"></div>
         <h2>Total</h2>
         <div class="category">
           <div class="category-header">
@@ -125,7 +141,7 @@
             </div>
           </div>
         </div>
-        <div id="summary" class="summary"></div>
+        <div id="divider" class="divider"></div>
       `;
 
       // Render categories
@@ -161,6 +177,7 @@
 
       // Render poupancas
       const poupancasDiv = document.getElementById("poupancas");
+      poupancasDiv.innerHTML = "<div id='divider' class='divider'></div><h2>Poupanças</h2>";
       poupancaCategories.forEach(item => {
         let goal2 = item.goal ? JSON.parse(item.goal) : [];
         let goal3 = goal2[0]?.amount ? goal2[0].amount * 100 :
