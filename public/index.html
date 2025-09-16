@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link href="https://fonts.googleapis.com/css?family=EB+Garamond:400,600,700" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script src="jquery.serialize-object.min.js"></script>
+    <title>Gastos</title>
+     <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+    <link rel="manifest" href="site.webmanifest">
+    <link rel="mask-icon" href="safari-pinned-tab.svg" color="#5bbad5">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="theme-color" content="#ffffff">
+    <title>Gastos Grin</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #f5f5f5;
+    }
+    h1 { text-align: center; color: #333; }
+    .categories { display: grid; gap: 20px; }
+    .category {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+    .category-header { display: flex; justify-content: space-between; font-weight: 600; }
+    .progress-container { background: #67c12232; height: 20px; border-radius: 5px; overflow: hidden; margin-top: 5px; }
+    .progress-container-poupanca { background: #eee; height: 20px; border-radius: 5px; overflow: hidden; margin-top: 5px; }
+    .progress-bar { height: 100%; background: #67C122; transition: width 0.3s; }
+    .over-budget { background: #f2c9c9 !important; }
+    .over-budget-text { color: #dc2626 !important; }
+    .in-progress { background: #2294c1 !important; }
+    .divider { padding-bottom: 20px; margin-top: 50px; border-top: 2px solid #d7d7d7; }
+  </style>
+</head>
+<body>
+  <h1 id="page-title">Gastos Grin</h1>
+  <div style="width:100%;text-align:center">
+    <span><a href="?isLastMonth=true">Ver mês passado</a></span>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <span><a href="?isLastMonth=false">Ver mês atual</a></span>
+    <br><br><br>
+  </div>
+      <div id="divider" class="divider"></div>
+    <div id="summary" class="summary"></div>
+          <div id="divider" class="divider"></div>
+  <div id="categories" class="categories"></div>
+      <div id="divider" class="divider"></div>
+  <h2>Poupanças</h2>
+  <div id="poupancas" class="categories"></div>
+
+  <script>
+    const monthNames = [
+      "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
+      "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
+    ];
+
+    function formatCurrency(num) {
+      const fixed1 = num / 100;
+      return Number(fixed1).toLocaleString("de-DE");
+    }
+
+    function getMonthName(monthNumber) {
+      return monthNames[monthNumber - 1] || "Invalid month";
+    }
+
+    async function loadData() {
+      const params = new URLSearchParams(window.location.search);
+      const isLastMonth = params.get("isLastMonth") || "false";
+
+      // Fetch from your Netlify function
+      const res = await fetch(`/.netlify/functions/getBudget?lastMonth=${isLastMonth}`);
+      const data = await res.json();
+
+      const { visibleCategories, poupancaCategories, totalSpent, fromLastMonth, lucro, month, totalgoals } = data;
+
+      // Update title
+      document.getElementById("page-title").textContent =
+        `Gastos Grin | ${getMonthName(month)}`;
+
+
+       // Render summary
+      const summaryDiv = document.getElementById("summary");
+      const percentage = (totalSpent / fromLastMonth) * 100;
+      const isOverBudget = percentage > 100;
+      summaryDiv.innerHTML = `
+        <h2>Total</h2>
+        <div class="category">
+          <div class="category-header">
+            <span>Total necessário para fundar todas as categorias ("Cost to be me")</span>
+            <span>₪${formatCurrency(totalgoals * 100)}</span>
+          </div>
+        </div>
+        <div class="category">
+          <div class="category-header">
+            <span>Total gasto da renda do mês passado</span>
+            <span class="${isOverBudget ? 'over-budget-text' : ''}">
+              ₪${formatCurrency(totalSpent)} / ₪${formatCurrency(fromLastMonth)}
+            </span>
+          </div>
+          <div class="progress-container">
+            <div class="progress-bar ${isOverBudget ? 'over-budget' : ''}" style="width:${100 - percentage}%"></div>
+          </div>
+          <div style="display:flex; justify-content: space-between;">
+            <div style="margin-top:5px; color:${isOverBudget ? '#dc2626' : '#666'}">
+              ${Math.max((100 - percentage).toFixed(0), 0)}% ${isOverBudget ? ' (Over Budget!)' : ''}
+            </div>
+            <div style="margin-top:5px; font-weight:600; color:#666">
+              Lucro: <span style="color:${isOverBudget ? '#dc2626' : '#67C122'}">₪${formatCurrency(lucro)}</span>
+            </div>
+          </div>
+        </div>
+        <div id="summary" class="summary"></div>
+      `;
+
+      // Render categories
+      const categoriesDiv = document.getElementById("categories");
+      categoriesDiv.innerHTML = "<h2>Gastos</h2>";
+      visibleCategories.forEach(item => {
+        let percentage = item.spent / (item.balance + Math.abs(item.spent)) * -100;
+        if (item.spent === 0 && item.balance === 0) percentage = 100;
+        const isOverBudget = percentage > 100;
+
+        categoriesDiv.innerHTML += `
+          <div class="category">
+            <div class="category-header">
+              <span>${item.name}</span>
+              <span class="${isOverBudget ? 'over-budget-text' : ''}">
+                ₪${formatCurrency(Math.abs(item.spent))} / ₪${formatCurrency(item.balance + Math.abs(item.spent))}
+              </span>
+            </div>
+            <div class="progress-container">
+              <div class="progress-bar ${isOverBudget ? 'over-budget' : ''}" style="width:${100 - percentage}%"></div>
+            </div>
+            <div style="display:flex; justify-content: space-between;">
+              <div style="margin-top:5px; color:${isOverBudget ? '#dc2626' : '#666'}">
+                ${Math.max((100 - percentage).toFixed(0), 0)}% ${isOverBudget ? ' (Over Budget!)' : ''}
+              </div>
+              <div style="margin-top:5px; font-weight:600; color:#666">
+                Disponível: <span style="color:${isOverBudget ? '#dc2626' : '#67C122'}">₪${formatCurrency(item.balance)}</span>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+
+      // Render poupancas
+      const poupancasDiv = document.getElementById("poupancas");
+      poupancaCategories.forEach(item => {
+        let goal2 = item.goal ? JSON.parse(item.goal) : [];
+        let goal3 = goal2[0]?.amount ? goal2[0].amount * 100 :
+                    goal2[1]?.amount ? goal2[1].amount * 100 : 1;
+        const percentage2 = item.balance / goal3 * 100;
+        const isCompleted = percentage2 > 99;
+
+        poupancasDiv.innerHTML += `
+          <div class="category">
+            <div class="category-header">
+              <span>${item.name}</span>
+              <span>₪${formatCurrency(Math.abs(item.balance))} / ₪${formatCurrency(Math.abs(goal3))}</span>
+            </div>
+            <div class="progress-container-poupanca">
+              <div class="progress-bar ${!isCompleted ? 'in-progress' : 'in-progress'}" style="width:${Math.min(percentage2, 100)}%"></div>
+            </div>
+            <div style="display:flex; justify-content: space-between;">
+              <div style="margin-top:5px; color:${isCompleted ? '#666' : '#666'}">
+                ${percentage2.toFixed(0)}% ${isCompleted ? '(Completed!)' : ''}
+              </div>
+              <div style="margin-top:5px; font-weight:600; color:#666">
+                Disponível: <span style="color:${isCompleted ? '#2294c1' : '#2294c1'}">₪${formatCurrency(item.balance)}</span>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    loadData();
+  </script>
+</body>
+</html>
