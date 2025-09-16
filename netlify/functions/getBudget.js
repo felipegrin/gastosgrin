@@ -47,18 +47,26 @@ async function enrichBudgetCategories(isLastMonth) {
     .filter(cat => cat.group_id !== "acf7c9c5-f825-4d01-9edf-d4e3b62f7d22"); // poupancas
 
   // Calculate total goals
-  let totalgoals = 0;
-  for (const cat of visibleCategories) {
-    let goal2 = "none";
-    if (cat.goal != null) {
-      goal2 = JSON.parse(cat.goal);
-    }
-    if (goal2[0].limit !== null && goal2[0].limit.amount !== null) {
-      totalgoals += goal2[0].limit.amount;
-    } else if (goal2[0].monthly !== null) {
-      totalgoals += goal2[0].monthly;
-    }
+let totalgoals = 0;
+for (const cat of visibleCategories) {
+  if (!cat.goal) continue;
+
+  let goal2;
+  try {
+    goal2 = JSON.parse(cat.goal);
+  } catch {
+    continue; // skip invalid JSON
   }
+
+  if (!Array.isArray(goal2) || !goal2[0]) continue;
+
+  const g = goal2[0];
+  if (g.limit && g.limit.amount != null) {
+    totalgoals += g.limit.amount;
+  } else if (g.monthly != null) {
+    totalgoals += g.monthly;
+  }
+}
 
   // Filter only poupancas
   const poupancaCategories = allCategories
@@ -82,7 +90,7 @@ exports.handler = async (event, context) => {
     // Optional query param: ?lastMonth=true
     const isLastMonth = event.queryStringParameters.lastMonth || "false";
     const result = await enrichBudgetCategories(isLastMonth);
-    // console.log(result);
+     console.log(result);
 
     return {
       statusCode: 200,
