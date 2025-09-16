@@ -48,17 +48,7 @@ async function enrichBudgetCategories(isLastMonth) {
 
   // Calculate total goals
   let totalgoals = 0;
-  for (const cat of visibleCategories) {
-    let goal2 = "none";
-    if (cat.goal != null) {
-      goal2 = JSON.parse(cat.goal);
-    }
-    if (goal2[0].limit !== null) {
-      totalgoals += goal2[0].limit.amount;
-    } else if (goal2[0].monthly !== null) {
-      totalgoals += goal2[0].monthly;
-    }
-  }
+
 
   // Filter only poupancas
   const poupancaCategories = allCategories
