@@ -44,10 +44,9 @@ exports.handler = async (event, context) => {
     await downloadBudget("1bc93ff2-c30a-4f25-9c36-8572ba72df56");
 
     // Optional query param: ?lastMonth=true
-    const month = event.queryStringParameters.month || "09";
-    const cat = event.queryStringParameters.cat || "Projetor";
+    const month = event.queryStringParameters.month;
+    const cat = decodeURIComponent(event.queryStringParameters.cat);
     const result = await getTransactionsList(month,cat);
-     console.log(result);
 
     return {
       statusCode: 200,

@@ -157,7 +157,7 @@
         const isOverBudget = percentage > 100;
         const monthFormatted = month.toString().padStart(2, '0');
         categoriesDiv.innerHTML += `
-        <a href="transactions.html?cat=${item.name}&month=${monthFormatted}">
+        <a href="transactions.html?cat=${encodeURIComponent(item.name)}&month=${monthFormatted}">
           <div class="category">
             <div class="category-header">
               <span>${item.name}</span>
