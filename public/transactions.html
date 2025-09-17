@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link href="https://fonts.googleapis.com/css?family=EB+Garamond:400,600,700" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script src="jquery.serialize-object.min.js"></script>
+    <title>Gastos</title>
+     <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+    <link rel="manifest" href="site.webmanifest">
+    <link rel="mask-icon" href="safari-pinned-tab.svg" color="#5bbad5">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="theme-color" content="#ffffff">
+    <title>Gastos Grin</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #f5f5f5;
+    }
+    h1 { text-align: center; color: #333; }
+    .categories { display: grid; gap: 20px; }
+    .category {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+    .category-header { display: flex; justify-content: space-between; font-weight: 600; }
+    .progress-container { background: #67c12232; height: 20px; border-radius: 5px; overflow: hidden; margin-top: 5px; }
+    .progress-container-poupanca { background: #eee; height: 20px; border-radius: 5px; overflow: hidden; margin-top: 5px; }
+    .progress-bar { height: 100%; background: #67C122; transition: width 0.3s; }
+    .over-budget { background: #f2c9c9 !important; }
+    .over-budget-text { color: #dc2626 !important; }
+    .in-progress { background: #2294c1 !important; }
+    .divider { padding-bottom: 20px; margin-top: 50px; border-top: 2px solid #d7d7d7; }
+    .loader {
+  border: 10px solid #d9d9d9; /* Light grey */
+  border-top: 10px solid #3498db; /* Blue */
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  animation: spin 2s linear infinite;
+  margin: auto;
+  margin-top: 100px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+table {
+      border-collapse: collapse;
+      width: 60%;
+      margin: auto;
+      background: #fff;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      border-radius: 8px;
+      overflow: hidden;
+      border: 0;
+    }
+
+    thead {
+      background: #4a90e2;
+      color: white;
+    }
+
+    th, td {
+      padding: 12px 16px;
+      text-align: left;
+      border: 0;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f2f6fc;
+    }
+
+    th {
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-size: 14px;
+    }
+
+    td {
+      font-size: 14px;
+      color: #333;
+    }
+
+    .empty{
+      text-align: center;
+      margin: auto;
+    }
+
+    a {text-decoration: none; color: blue}
+
+    .back{
+      text-align: center;
+      margin: auto;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1 id="page-title">Gastos Grin</h1>
+       <div id="loader-container"><div class="loader" id="loader"></div></div> 
+  <div id="transactions">
+  </div>
+
+  <script>
+
+    async function loadData() {
+            console.log("data");
+      // Fetch from your Netlify function
+      const params = new URLSearchParams(window.location.search);
+      const month = params.get("month") || "09";
+      const cat = params.get("cat") || "Projetor";
+      const res = await fetch(`/.netlify/functions/getTransactions?month=${month}&cat=${cat}`);
+      const data = await res.json();
+              const monthNames = [
+      "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
+      "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
+    ];
+
+    //Render table
+      document.getElementById("transactions").innerHTML =
+        `
+            <table border="1" id="data-table">
+    <thead>
+      <tr>
+        <th>Data</th>
+        <th>Pago para</th>
+        <th>Observações</th>
+        <th>Valor</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+  <div class="back"><a href="javascript:history.back()">← Voltar</a></div>
+        `;
+
+      function getMonthName(monthNumber) {
+      return monthNames[month - 1] || "Invalid month";
+    }
+
+        function formatCurrency(num) {
+      const fixed1 = num / 100;
+      return Number(fixed1).toLocaleString("de-DE");
+    }
+
+      console.log(data);
+
+      // Update title
+      document.getElementById("page-title").textContent =
+        `${cat} |  ${getMonthName(month)}`;
+
+      //Remove loader
+      const loaderDIV = document.getElementById("loader-container");
+      loaderDIV.innerHTML = "";
+
+       //Render transactions
+    const tableBody = document.querySelector("#data-table tbody");
+
+    data.data.forEach(item => {
+      const row = document.createElement("tr");
+
+      const dateCell = document.createElement("td");
+      dateCell.textContent = item.date;
+      row.appendChild(dateCell);
+
+      const payeeCell = document.createElement("td");
+      payeeCell.textContent = item["payee.name"];
+      row.appendChild(payeeCell);
+
+      const notesCell = document.createElement("td");
+      notesCell.textContent = item.notes;
+      row.appendChild(notesCell);
+
+      const amountCell = document.createElement("td");
+      amountCell.textContent = formatCurrency(item.amount);
+      row.appendChild(amountCell);
+
+      tableBody.appendChild(row);
+    });
+
+          //If no transactions, show text
+      if(data.data.length == 0){
+        const transactionsDIV = document.getElementById("transactions");
+        transactionsDIV.innerHTML = `<div class='empty'>Nenhum gasto nesta categoria :)</div><div class="back"><a href="javascript:history.back()">← Voltar</a></div>`;
+      }  
+
+    }
+
+
+
+    loadData();
+  </script>
+</body>
+</html>

@@ -29,6 +29,10 @@
       padding: 20px;
       background-color: #f5f5f5;
     }
+      a {text-decoration: none; color: inherit}
+      .monthChange{
+        text-decoration: none; color: blue;
+      }
     h1 { text-align: center; color: #333; }
     .categories { display: grid; gap: 20px; }
     .category {
@@ -66,9 +70,9 @@
 <body>
   <h1 id="page-title">Gastos Grin</h1>
   <div style="width:100%;text-align:center">
-    <span><a href="?isLastMonth=true">Ver mês passado</a></span>
+    <span><a class="monthChange" href="?isLastMonth=true">Ver mês passado</a></span>
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    <span><a href="?isLastMonth=false">Ver mês atual</a></span>
+    <span><a class="monthChange" href="?isLastMonth=false">Ver mês atual</a></span>
     <br><br><br>
   </div>
      <div id="loader-container"><div class="loader" id="loader"></div></div> 
@@ -151,8 +155,9 @@
         let percentage = item.spent / (item.balance + Math.abs(item.spent)) * -100;
         if (item.spent === 0 && item.balance === 0) percentage = 100;
         const isOverBudget = percentage > 100;
-
+        const monthFormatted = month.toString().padStart(2, '0');
         categoriesDiv.innerHTML += `
+        <a href="transactions.html?cat=${item.name}&month=${monthFormatted}">
           <div class="category">
             <div class="category-header">
               <span>${item.name}</span>
@@ -172,6 +177,7 @@
               </div>
             </div>
           </div>
+          </a>
         `;
       });
 
@@ -184,8 +190,10 @@
                     goal2[1]?.amount ? goal2[1].amount * 100 : 1;
         const percentage2 = item.balance / goal3 * 100;
         const isCompleted = percentage2 > 99;
+        const monthFormatted = month.toString().padStart(2, '0');
 
         poupancasDiv.innerHTML += `
+          <a href="transactions.html?cat=${item.name}&month=${monthFormatted}">
           <div class="category">
             <div class="category-header">
               <span>${item.name}</span>
@@ -203,6 +211,7 @@
               </div>
             </div>
           </div>
+          </a>
         `;
       });
     }
