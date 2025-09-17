@@ -57,48 +57,47 @@
   margin-top: 100px;
 }
 
+.card {
+    margin: auto;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    padding: 18px;
+    margin-bottom: 16px;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    max-width: 400px;
+  }
+
+  .card-row {
+    margin-bottom: 25px;
+  }
+  .card-label {
+    font-weight: 600;
+    color: #666;
+    display: block;
+    margin-bottom: 4px;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .card-value {
+    color: #222;
+    font-size: 16px;
+  }
+
+  .amount.negative {
+    color: #e74c3c; /* red */
+    font-weight: 700;
+  }
+  .amount.positive {
+    color: #27ae60; /* green */
+    font-weight: 700;
+  }
+
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
-
-table {
-      border-collapse: collapse;
-      width: 60%;
-      margin: auto;
-      background: #fff;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-      border-radius: 8px;
-      overflow: hidden;
-      border: 0;
-    }
-
-    thead {
-      background: #4a90e2;
-      color: white;
-    }
-
-    th, td {
-      padding: 12px 16px;
-      text-align: left;
-      border: 0;
-    }
-
-    tr:nth-child(even) {
-      background-color: #f2f6fc;
-    }
-
-    th {
-      font-weight: bold;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      font-size: 14px;
-    }
-
-    td {
-      font-size: 14px;
-      color: #333;
-    }
 
     .empty{
       text-align: center;
@@ -135,23 +134,6 @@ table {
       "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
     ];
 
-    //Render table
-      document.getElementById("transactions").innerHTML =
-        `
-            <table border="1" id="data-table">
-    <thead>
-      <tr>
-        <th>Data</th>
-        <th>Pago para</th>
-        <th>Observações</th>
-        <th>Valor</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
-  <div class="back"><a href="javascript:history.back()">← Voltar</a></div>
-        `;
-
       function getMonthName(monthNumber) {
       return monthNames[month - 1] || "Invalid month";
     }
@@ -171,30 +153,20 @@ table {
       const loaderDIV = document.getElementById("loader-container");
       loaderDIV.innerHTML = "";
 
-       //Render transactions
-    const tableBody = document.querySelector("#data-table tbody");
+      const container = document.getElementById('transactions');
+  data.data.forEach(item => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `
+      <div class="card-row"><span class="card-label">Data</span><span class="card-value">${item.date}</span></div>
+      <div class="card-row"><span class="card-label">Pago para</span><span class="card-value">${item["payee.name"]}</span></div>
+      <div class="card-row"><span class="card-label">Observações</span><span class="card-value">${item.notes || "-"} </span></div>
+      <div class=""><span class="card-label">Valor</span><span class="card-value amount ${item.amount < 0 ? 'negative' : 'positive'}">${formatCurrency(item.amount)}</span></div>
+    `;
+    container.appendChild(card);
+  });
+      container.innerHTML += '<div class="back"><a href="javascript:history.back()">← Voltar</a></div>';
 
-    data.data.forEach(item => {
-      const row = document.createElement("tr");
-
-      const dateCell = document.createElement("td");
-      dateCell.textContent = item.date;
-      row.appendChild(dateCell);
-
-      const payeeCell = document.createElement("td");
-      payeeCell.textContent = item["payee.name"];
-      row.appendChild(payeeCell);
-
-      const notesCell = document.createElement("td");
-      notesCell.textContent = item.notes;
-      row.appendChild(notesCell);
-
-      const amountCell = document.createElement("td");
-      amountCell.textContent = formatCurrency(item.amount);
-      row.appendChild(amountCell);
-
-      tableBody.appendChild(row);
-    });
 
           //If no transactions, show text
       if(data.data.length == 0){
