@@ -1,82 +1,243 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link href="https://fonts.googleapis.com/css?family=EB+Garamond:400,600,700" rel="stylesheet">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
-    <script src="jquery.serialize-object.min.js"></script>
-    <title>Gastos</title>
-     <link rel="icon" href="favicon.ico" type="image/x-icon">
-    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
-    <link rel="manifest" href="site.webmanifest">
-    <link rel="mask-icon" href="safari-pinned-tab.svg" color="#5bbad5">
-    <meta name="msapplication-TileColor" content="#da532c">
-    <meta name="theme-color" content="#ffffff">
-    <title>Gastos Grin</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link href="https://fonts.googleapis.com/css?family=EB+Garamond:400,600,700" rel="stylesheet">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+  <script src="jquery.serialize-object.min.js"></script>
+  <title>Gastos Grin</title>
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+  <link rel="manifest" href="site.webmanifest">
+  <link rel="mask-icon" href="safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+
   <style>
+    /* --- Global & Mobile Setup --- */
     body {
-      font-family: Arial, sans-serif;
-      max-width: 800px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f8f8f8;
+      /* Light background */
+      max-width: 400px;
+      /* Constrain to mobile width */
       margin: 0 auto;
-      padding: 20px;
-      background-color: #f5f5f5;
+      /* Center on desktop, but full screen on mobile */
     }
-      a {text-decoration: none; color: inherit}
-      .monthChange{
-        text-decoration: none; color: blue;
-      }
-    h1 { text-align: center; color: #333; }
-    .categories { display: grid; gap: 20px; }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+      display: block;
+      /* Make the whole category card clickable */
+    }
+
+    .month-change-wrapper{
+      margin: auto;
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .monthChange {
+      color: #4CAF50;
+      /* Primary Green for links */
+      font-weight: 500;
+      display: inline-block; 
+      padding: 0 10px; /* Space between the two links */
+      color: #373737;
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+      font-size: 1.4em;
+      /* Smaller title */
+      padding-top: 10px;
+      margin-bottom: 5px;
+    }
+
+    h2 {
+      color: #373737;
+      /* Add margin for mobile padding */
+      font-size: 1em;
+      /* Smaller subtitle for category groups */
+      text-transform: uppercase;
+      font-weight: 600;
+      margin-top: 30px;
+    }
+
+    /* --- Container & Layout --- */
+    .categories {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+      /* Minimal gap for a compact list */
+      padding: 0;
+    }
+
     .category {
       background: white;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-      margin-bottom: 20px;
+      padding: 10px 15px;
+      /* Reduced vertical padding for compactness */
+      border-bottom: 1px solid #eee;
+      /* Light separator */
+      border-radius: 0;
+      /* Remove rounded corners for a clean list look */
     }
-    .category-header { display: flex; justify-content: space-between; font-weight: 600; }
-    .progress-container { background: #67c12232; height: 20px; border-radius: 5px; overflow: hidden; margin-top: 5px; }
-    .progress-container-poupanca { background: #eee; height: 20px; border-radius: 5px; overflow: hidden; margin-top: 5px; }
-    .progress-bar { height: 100%; background: #67C122; transition: width 0.3s; }
-    .over-budget { background: #f2c9c9 !important; }
-    .over-budget-text { color: #dc2626 !important; }
-    .in-progress { background: #2294c1 !important; }
-    .divider { padding-bottom: 20px; margin-top: 50px; border-top: 2px solid #d7d7d7; }
-    .loader {
-  border: 10px solid #d9d9d9; /* Light grey */
-  border-top: 10px solid #3498db; /* Blue */
-  border-radius: 50%;
-  width: 20px;
-  height: 20px;
-  animation: spin 2s linear infinite;
-  margin: auto;
-  margin-top: 100px;
-}
 
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
+    .category-header {
+      display: flex;
+      justify-content: space-between;
+      font-weight: 500;
+      line-height: 1.4;
+      /* Tighten up line spacing */
+    }
+
+    .category-header span:first-child {
+      /* Item Name */
+      font-weight: 600;
+    }
+
+    .category-header span:last-child {
+      /* Budgeted/Goal Amount */
+      font-size: 0.9em;
+      color: #666;
+      align-self: flex-start;
+      padding-top: 2px;
+      text-align: right;
+    }
+
+    /* --- Progress Bars (Slimmer) --- */
+    .progress-container,
+    .progress-container-poupanca {
+      background: #4caf5042;
+      /* Light grey base */
+      height: 4px;
+      /* Much slimmer bar */
+      border-radius: 2px;
+      overflow: hidden;
+      margin-top: 6px;
+      margin-bottom: 3px;
+    }
+
+    .progress-container-poupanca {
+     background: #e6e6e6;
+    }
+    
+
+    .progress-bar {
+      height: 100%;
+      background: #4CAF50;
+      /* Primary Green */
+      transition: width 0.3s;
+    }
+
+    .in-progress {
+      background: #2294c1 !important;
+      /* Blue for savings */
+    }
+
+    /* --- Bottom Details (Lucro/Disponível) Compacted --- */
+    .item-details-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.85em;
+      /* Smaller font for details */
+      margin-top: 5px;
+      text-align: right;
+    }
+
+    .detail-text {
+      color: #888;
+      font-weight: 500;
+    }
+
+    .available-amount {
+      font-weight: 700;
+      color: #666;
+      /* Primary Green for positive availability */
+      font-size: 1em;
+    }
+
+    /* --- Over Budget/Negative Styles --- */
+    .over-budget {
+      background: #dc2626 !important;
+      /* Red for over budget bar */
+    }
+
+    .over-budget-text {
+      color: #dc2626 !important;
+      /* Red text for over budget amounts/status */
+    }
+
+    /* --- Divider (Streamlined) --- */
+    .divider {
+      border: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* --- Summary Section Specifics --- */
+    .summary-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 15px;
+      background-color: white;
+      font-weight: 600;
+      border-bottom: 1px solid #eee;
+    }
+
+    .summary-header-row .detail-text {
+      font-weight: 500;
+    }
+
+    /* --- Loader --- */
+    .loader {
+      border: 10px solid #d9d9d9;
+      /* Light grey */
+      border-top: 10px solid #3498db;
+      /* Blue */
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      animation: spin 2s linear infinite;
+      margin: auto;
+      margin-top: 50px;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
   </style>
 </head>
+
 <body>
   <h1 id="page-title">Gastos Grin</h1>
-  <div style="width:100%;text-align:center">
-    <span><a class="monthChange" href="?isLastMonth=true">Ver mês passado</a></span>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    <span><a class="monthChange" href="?isLastMonth=false">Ver mês atual</a></span>
-    <br><br><br>
+  <div class="month-change-wrapper">
+    <a class="monthChange" href="?isLastMonth=true">Ver mês passado</a>
+    <a class="monthChange" href="?isLastMonth=false">Ver mês atual</a>
   </div>
-     <div id="loader-container"><div class="loader" id="loader"></div></div> 
-    <div id="summary" class="summary"></div>
+  <div id="loader-container">
+    <div class="loader" id="loader"></div>
+  </div>
+  <div id="summary" class="summary"></div>
   <div id="categories" class="categories"></div>
   <div id="poupancas" class="categories"></div>
 
@@ -103,7 +264,15 @@
       const res = await fetch(`/.netlify/functions/getBudget?lastMonth=${isLastMonth}`);
       const data = await res.json();
 
-      const { visibleCategories, poupancaCategories, totalSpent, fromLastMonth, lucro, month, totalgoals } = data;
+      const {
+        groupedCategories,
+        poupancaCategories,
+        totalSpent,
+        fromLastMonth,
+        lucro,
+        month,
+        totalgoals
+      } = data;
 
       // Update title
       document.getElementById("page-title").textContent =
@@ -113,20 +282,21 @@
       const loaderDIV = document.getElementById("loader-container");
       loaderDIV.innerHTML = "";
 
-       // Render summary
+      // Render summary
       const summaryDiv = document.getElementById("summary");
       const percentage = (totalSpent / fromLastMonth) * 100;
       const isOverBudget = percentage > 100;
+
       summaryDiv.innerHTML = `
        <div id="divider" class="divider"></div>
-        <h2>Total</h2>
-        <div class="category">
-          <div class="category-header">
-            <span>Total necessário para fundar todas as categorias ("Cost to be me")</span>
-            <span>₪${formatCurrency(totalgoals * 100)}</span>
-          </div>
+        <h2>TOTAL</h2>
+        
+        <div class="summary-header-row">
+          <span class="category-header">Total necessário para fundar todas as categorias ("Cost to be me")</span>
+          <div class="item-details-row"> <span class="available-amount">₪${formatCurrency(totalgoals * 100)}</span></div>
         </div>
-        <div class="category">
+
+        <div class="category" style="background-color: #e6f7df; border-top: none;">
           <div class="category-header">
             <span>Total gasto da renda do mês passado</span>
             <span class="${isOverBudget ? 'over-budget-text' : ''}">
@@ -136,49 +306,52 @@
           <div class="progress-container">
             <div class="progress-bar ${isOverBudget ? 'over-budget' : ''}" style="width:${100 - percentage}%"></div>
           </div>
-          <div style="display:flex; justify-content: space-between;">
-            <div style="margin-top:5px; color:${isOverBudget ? '#dc2626' : '#666'}">
-              ${Math.max((100 - percentage).toFixed(0), 0)}% ${isOverBudget ? ' (Over Budget!)' : ''}
-            </div>
-            <div style="margin-top:5px; font-weight:600; color:#666">
-              Lucro: <span style="color:${isOverBudget ? '#dc2626' : '#67C122'}">₪${formatCurrency(lucro)}</span>
-            </div>
+          <div class="item-details-row">
+            <span class="detail-text" style="color:${isOverBudget ? '#dc2626' : '#4CAF50'}">
+              ${Math.max((100 - percentage).toFixed(0), 0)}% ${isOverBudget ? ' (Over Budget!)' : ''} restante
+            </span>
+            <span class="available-amount">
+              Lucro: <span style="color:${isOverBudget ? '#dc2626' : '#4CAF50'}">₪${formatCurrency(lucro)}</span>
+            </span>
           </div>
         </div>
-        <div id="divider" class="divider"></div>
       `;
 
       // Render categories
       const categoriesDiv = document.getElementById("categories");
-      categoriesDiv.innerHTML = "<h2>Gastos</h2>";
-      visibleCategories.forEach(item => {
-        let percentage = item.spent / (item.balance + Math.abs(item.spent)) * -100;
-        if (item.spent === 0 && item.balance === 0) percentage = 100;
-        const isOverBudget = percentage > 100;
-        const monthFormatted = month.toString().padStart(2, '0');
-        categoriesDiv.innerHTML += `
-        <a href="transactions.html?cat=${encodeURIComponent(item.name)}&month=${monthFormatted}">
-          <div class="category">
-            <div class="category-header">
-              <span>${item.name}</span>
-              <span class="${isOverBudget ? 'over-budget-text' : ''}">
-                ₪${formatCurrency(Math.abs(item.spent))} / ₪${formatCurrency(item.balance + Math.abs(item.spent))}
-              </span>
-            </div>
-            <div class="progress-container">
-              <div class="progress-bar ${isOverBudget ? 'over-budget' : ''}" style="width:${100 - percentage}%"></div>
-            </div>
-            <div style="display:flex; justify-content: space-between;">
-              <div style="margin-top:5px; color:${isOverBudget ? '#dc2626' : '#666'}">
-                ${Math.max((100 - percentage).toFixed(0), 0)}% ${isOverBudget ? ' (Over Budget!)' : ''}
-              </div>
-              <div style="margin-top:5px; font-weight:600; color:#666">
-                Disponível: <span style="color:${isOverBudget ? '#dc2626' : '#67C122'}">₪${formatCurrency(item.balance)}</span>
-              </div>
-            </div>
+      categoriesDiv.innerHTML = "";
+
+      groupedCategories.forEach(group => {
+        categoriesDiv.innerHTML += `<div id="divider" class="divider"></div><h2>${group.name}</h2>`;
+        group.categories.forEach(item => {
+          let percentage = item.spent / (item.balance + Math.abs(item.spent)) * -100;
+          if (item.spent === 0 && item.balance === 0) percentage = 100;
+          const isOverBudget = percentage > 100;
+          const monthFormatted = month.toString().padStart(2, '0');
+          categoriesDiv.innerHTML += `
+      <a href="transactions.html?cat=${encodeURIComponent(item.name)}&month=${monthFormatted}">
+        <div class="category">
+          <div class="category-header">
+            <span>${item.name}</span>
+            <span class="${isOverBudget ? 'over-budget-text' : ''}">
+              ₪${formatCurrency(Math.abs(item.spent))} / ₪${formatCurrency(item.balance + Math.abs(item.spent))}
+            </span>
           </div>
-          </a>
-        `;
+          <div class="progress-container">
+            <div class="progress-bar ${isOverBudget ? 'over-budget' : ''}" style="width:${100 - percentage}%"></div>
+          </div>
+          <div class="item-details-row">
+            <span class="detail-text" style="color:${isOverBudget ? '#dc2626' : '#666'}">
+              ${Math.max((100 - percentage).toFixed(0), 0)}% ${isOverBudget ? ' (Over Budget!)' : 'restante'}
+            </span>
+            <span class="available-amount">
+              Disponível: <span style="color:${isOverBudget ? '#dc2626' : '#4CAF50'}">₪${formatCurrency(item.balance)}</span>
+            </span>
+          </div>
+        </div>
+      </a>
+    `;
+        });
       });
 
       // Render poupancas
@@ -187,7 +360,7 @@
       poupancaCategories.forEach(item => {
         let goal2 = item.goal ? JSON.parse(item.goal) : [];
         let goal3 = goal2[0]?.amount ? goal2[0].amount * 100 :
-                    goal2[1]?.amount ? goal2[1].amount * 100 : 1;
+          goal2[1]?.amount ? goal2[1].amount * 100 : 1;
         const percentage2 = item.balance / goal3 * 100;
         const isCompleted = percentage2 > 99;
         const monthFormatted = month.toString().padStart(2, '0');
@@ -202,13 +375,13 @@
             <div class="progress-container-poupanca">
               <div class="progress-bar ${!isCompleted ? 'in-progress' : 'in-progress'}" style="width:${Math.min(percentage2, 100)}%"></div>
             </div>
-            <div style="display:flex; justify-content: space-between;">
-              <div style="margin-top:5px; color:${isCompleted ? '#666' : '#666'}">
-                ${percentage2.toFixed(0)}% ${isCompleted ? '(Completed!)' : ''}
-              </div>
-              <div style="margin-top:5px; font-weight:600; color:#666">
-                Disponível: <span style="color:${isCompleted ? '#2294c1' : '#2294c1'}">₪${formatCurrency(item.balance)}</span>
-              </div>
+            <div class="item-details-row">
+              <span class="detail-text">
+                ${percentage2.toFixed(0)}% ${isCompleted ? '(✔︎ Completed!)' : 'fundado'}
+              </span>
+              <span class="available-amount" style="color:#2294c1">
+                Disponível: ₪${formatCurrency(item.balance)}
+              </span>
             </div>
           </div>
           </a>
@@ -219,4 +392,5 @@
     loadData();
   </script>
 </body>
+
 </html>
