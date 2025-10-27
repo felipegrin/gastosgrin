@@ -6,22 +6,25 @@ const { q, runQuery, init, downloadBudget, getBudgetMonth } = require('@actual-a
 let initialized = false;
 
 async function setupActual() {
-    if (initialized) {
-        return; // Already initialized in a previous warm run
-    }
-    
-    // 1. Initialize API (Local cache storage)
-    await init({
-      serverURL: "https://actualgrin.pikapod.net",
-      password: ACTUAL_PASSWORD,
-      dataDir: '/tmp', // temporary storage for serverless functions
-    });
+  // We can use the below to skip loading the budget file if it's already on the cache. The problem is that this won't refresh and we might get outaded budget info
+  // if (initialized) {
+  //     console.log("skipping initialization");
+  //     return; 
+  // }
 
-    // 2. Download the budget file (Heavy I/O operation)
-    // This is the largest bottleneck and is now run once per container.
-    await downloadBudget("1bc93ff2-c30a-4f25-9c36-8572ba72df56");
+  // 1. Initialize API (Local cache storage)
+  await init({
+    serverURL: "https://actualgrin.pikapod.net",
+    password: ACTUAL_PASSWORD,
+    dataDir: '/tmp', // temporary storage for serverless functions
+  });
 
-    initialized = true;
+  // 2. Download the budget file (Heavy I/O operation)
+  // This is the largest bottleneck and is now run once per container.
+  await downloadBudget("1bc93ff2-c30a-4f25-9c36-8572ba72df56");
+
+  initialized = true;
+
 }
 // -----------------------------------------------------------------
 
@@ -114,7 +117,7 @@ async function enrichBudgetCategories(isLastMonth) {
 exports.handler = async (event, context) => {
   try {
     // This function will only perform the expensive init/download once per container
-    await setupActual(); 
+    await setupActual();
 
     // Optional query param: ?lastMonth=true
     const isLastMonth = event.queryStringParameters.lastMonth || "false";
