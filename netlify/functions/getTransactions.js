@@ -18,7 +18,6 @@ async function setupActual() {
     });
 
     // 2. Download the budget file (Heavy I/O operation)
-    // This is the largest bottleneck and is now run once per container.
     await downloadBudget("1bc93ff2-c30a-4f25-9c36-8572ba72df56");
 
     initialized = true;
@@ -35,6 +34,9 @@ function normalizeSpent(spent) {
 async function getTransactionsList(month, cat) {
   const year = "2025";
 
+  // *** OPTIMIZATION: Removed groupBy and $sum aggregation. ***
+  // This fetches individual transactions, which is usually faster
+  // and better suits the 'transactions.html' display logic.
   const { data } = await runQuery(
     q("transactions")
       .filter({
@@ -44,12 +46,11 @@ async function getTransactionsList(month, cat) {
           { date: { $lte: `${year}-${month}-32` } },
         ],
       })
-      .groupBy("payee.name")
       .select([
         "date",
         "payee.name",
         "notes",
-        { amount: { $sum: "$amount" } },
+        "amount", // Fetching individual amount
       ])
   );
 
@@ -59,7 +60,7 @@ async function getTransactionsList(month, cat) {
 // ---------- Netlify Function Handler ----------
 exports.handler = async (event, context) => {
   try {
-    // This function will only perform the expensive init/download once per container
+    // This will be fast on warm starts
     await setupActual(); 
 
     // Optional query param: ?lastMonth=true
