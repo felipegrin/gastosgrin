@@ -344,7 +344,7 @@
           </div>
           <div class="item-details-row">
             <span class="detail-text" style="color:${isOverBudget ? '#dc2626' : '#666'}">
-              ${Math.max((100 - percentage).toFixed(0), 0)}% ${isOverBudget ? ' (Over Budget!)' : 'restante'}
+               ${isOverBudget ? 'Over budget!' : `${Math.max((100 - percentage).toFixed(0), 0)}% restante`}
             </span>
             <span class="available-amount">
               Disponível: <span style="color:${isOverBudget ? '#dc2626' : '#4CAF50'}">₪${formatCurrency(item.balance)}</span>
@@ -379,7 +379,7 @@
             </div>
             <div class="item-details-row">
               <span class="detail-text">
-                ${percentage2.toFixed(0)}% ${isCompleted ? '(✔︎ Completed!)' : 'fundado'}
+                ${percentage2.toFixed(0)}% ${isCompleted ? '(✔︎ Completo!)' : 'fundado'}
               </span>
               <span class="available-amount" style="color:#2294c1">
                 Disponível: ₪${formatCurrency(item.balance)}
