@@ -242,6 +242,7 @@
   <div id="summary" class="summary"></div>
   <div id="categories" class="categories"></div>
   <div id="poupancas" class="categories"></div>
+    <div id="wishlist" class="categories"></div>
 
   <script>
     const monthNames = [
@@ -269,6 +270,7 @@
       const {
         groupedCategories,
         poupancaCategories,
+        wishlist,
         totalSpent,
         fromLastMonth,
         lucro,
@@ -389,6 +391,41 @@
           </a>
         `;
       });
+
+      // Render wislist
+      const wishlistDiv = document.getElementById("wishlist");
+      wishlistDiv.innerHTML = "<div id='divider' class='divider'></div><h2>Wish List</h2>";
+      wishlist.forEach(item => {
+        let goal2 = item.goal ? JSON.parse(item.goal) : [];
+        let goal3 = goal2[0]?.amount ? goal2[0].amount * 100 :
+          goal2[1]?.amount ? goal2[1].amount * 100 : 1;
+        const percentage2 = item.balance / goal3 * 100;
+        const isCompleted = percentage2 > 99;
+        const monthFormatted = month.toString().padStart(2, '0');
+
+        wishlistDiv.innerHTML += `
+          <a href="transactions.html?cat=${item.name}&month=${monthFormatted}">
+          <div class="category">
+            <div class="category-header">
+              <span>${item.name}</span>
+              <span>₪${formatCurrency(Math.abs(item.balance))} / ₪${formatCurrency(Math.abs(goal3))}</span>
+            </div>
+            <div class="progress-container-poupanca">
+              <div class="progress-bar ${!isCompleted ? 'in-progress' : 'in-progress'}" style="width:${Math.min(percentage2, 100)}%"></div>
+            </div>
+            <div class="item-details-row">
+              <span class="detail-text">
+                ${percentage2.toFixed(0)}% ${isCompleted ? '(✔︎ Completo!)' : 'fundado'}
+              </span>
+              <span class="available-amount" style="color:#2294c1">
+                Disponível: ₪${formatCurrency(item.balance)}
+              </span>
+            </div>
+          </div>
+          </a>
+        `;
+      });
+
     }
 
     loadData();

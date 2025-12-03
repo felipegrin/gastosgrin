@@ -60,6 +60,7 @@ async function enrichBudgetCategories(isLastMonth) {
     .filter(group =>
       group.id !== "2E1F5BDB-209B-43F9-AF2C-3CE28E380C00" && // exclude income
       group.id !== "acf7c9c5-f825-4d01-9edf-d4e3b62f7d22" && // exclude poupancas
+      group.name !== "WISH LIST" && // exclude wish list
       !group.hidden
     )
     .map(group => ({
@@ -86,6 +87,19 @@ async function enrichBudgetCategories(isLastMonth) {
   }
   console.log("poupancaCategories:" + poupancaCategories);
 
+    // wishlist separately
+  const wishlist = groups
+    .find(g => g.name === "WISH LIST")
+    ?.categories.filter(cat => !cat.hidden) || [];
+
+
+  // Merge goals
+  for (const cat of wishlist) {
+    const match = categories.find(c => c.id === cat.id);
+    if (match) cat.goal = match.goal_def;
+  }
+  console.log("wishlist:" + wishlist);
+
   // Calculate total goals
   let totalgoals = 0;
   for (const group of groupedCategories) {
@@ -110,7 +124,7 @@ async function enrichBudgetCategories(isLastMonth) {
     }
   }
 
-  return { groupedCategories, poupancaCategories, totalSpent, fromLastMonth, lucro, month, totalgoals };
+  return { groupedCategories, poupancaCategories, wishlist, totalSpent, fromLastMonth, lucro, month, totalgoals };
 }
 
 // ---------- Netlify Function Handler ----------
