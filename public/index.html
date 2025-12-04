@@ -148,6 +148,11 @@
       /* Blue for savings */
     }
 
+      .completed {
+      background: #4CAF50 !important;
+      /* Completed green for savings */
+    }
+
     /* --- Bottom Details (Lucro/Disponível) Compacted --- */
     .item-details-row {
       display: flex;
@@ -377,13 +382,13 @@
               <span>₪${formatCurrency(Math.abs(item.balance))} / ₪${formatCurrency(Math.abs(goal3))}</span>
             </div>
             <div class="progress-container-poupanca">
-              <div class="progress-bar ${!isCompleted ? 'in-progress' : 'in-progress'}" style="width:${Math.min(percentage2, 100)}%"></div>
+              <div class="progress-bar ${!isCompleted ? 'in-progress' : 'completed'}" style="width:${Math.min(percentage2, 100)}%"></div>
             </div>
             <div class="item-details-row">
               <span class="detail-text">
                 ${percentage2.toFixed(0)}% ${isCompleted ? '(✔︎ Completo!)' : 'fundado'}
               </span>
-              <span class="available-amount" style="color:#2294c1">
+              <span class="available-amount" style="color: ${!isCompleted ? '#2294c1' : '#4CAF50'}">
                 Disponível: ₪${formatCurrency(item.balance)}
               </span>
             </div>
@@ -411,13 +416,13 @@
               <span>₪${formatCurrency(Math.abs(item.balance))} / ₪${formatCurrency(Math.abs(goal3))}</span>
             </div>
             <div class="progress-container-poupanca">
-              <div class="progress-bar ${!isCompleted ? 'in-progress' : 'in-progress'}" style="width:${Math.min(percentage2, 100)}%"></div>
+              <div class="progress-bar ${!isCompleted ? 'in-progress' : 'completed'}" style="width:${Math.min(percentage2, 100)}%"></div>
             </div>
             <div class="item-details-row">
               <span class="detail-text">
                 ${percentage2.toFixed(0)}% ${isCompleted ? '(✔︎ Completo!)' : 'fundado'}
               </span>
-              <span class="available-amount" style="color:#2294c1">
+              <span class="available-amount" style="color: ${!isCompleted ? '#2294c1' : '#4CAF50'}">
                 Disponível: ₪${formatCurrency(item.balance)}
               </span>
             </div>
