@@ -9,6 +9,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@actual-app/api": "^25.11.0"
+    "@actual-app/api": "^25.12.0"
   }
 }
