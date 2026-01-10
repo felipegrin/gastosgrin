@@ -32,7 +32,13 @@ function normalizeSpent(spent) {
 
 
 async function getTransactionsList(month, cat) {
-  const year = "2025";
+    const today = new Date();
+    let year = today.getFullYear();
+
+    if (month == 12) {
+     month = 12;
+     year = today.getFullYear()-1;
+  }
 
   // *** OPTIMIZATION: Removed groupBy and $sum aggregation. ***
   // This fetches individual transactions, which is usually faster

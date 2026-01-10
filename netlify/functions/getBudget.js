@@ -47,6 +47,11 @@ async function enrichBudgetCategories(isLastMonth) {
     month = today.getMonth();
   }
 
+  if (month == 0) {
+     month = 12;
+     year = today.getFullYear()-1;
+  }
+
   const normalizdMonth = month.toString().padStart(2, '0');
   const budget = await getBudgetMonth(`${year}-${normalizdMonth}`);
 
