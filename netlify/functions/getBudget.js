@@ -121,11 +121,14 @@ async function enrichBudgetCategories(isLastMonth) {
       if (!Array.isArray(goal2) || !goal2[0]) continue;
 
       const g = goal2[0];
-      if (g.limit && g.limit.amount != null) {
-        totalgoals += g.limit.amount;
-      } else if (g.monthly != null) {
+      if (g.monthly != null) {
         totalgoals += g.monthly;
+        console.log(g.monthly);
       }
+      else if (g.limit && g.limit.amount != null) {
+        totalgoals += g.limit.amount;
+                console.log(g.limit.amount);
+      } 
     }
   }
 
