@@ -54,7 +54,7 @@ async function enrichBudgetCategories(isLastMonth) {
 
   const normalizdMonth = month.toString().padStart(2, '0');
   const budget = await getBudgetMonth(`${year}-${normalizdMonth}`);
-
+  console.log(budget)
   const groups = budget.categoryGroups;
   const totalSpent = normalizeSpent(budget.totalSpent);
   const fromLastMonth = normalizeSpent(budget.fromLastMonth);
