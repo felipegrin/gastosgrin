@@ -11,7 +11,7 @@
   "workspace": {
     "packageJson": {
       "dependencies": [
-        "npm:@actual-app/api@^6.2.1"
+        "npm:@actual-app/api@^26.2.1"
       ]
     }
   }
