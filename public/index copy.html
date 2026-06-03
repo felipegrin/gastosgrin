@@ -49,7 +49,7 @@
     }
 
     .monthChange {
-      color: #27AB83;
+      color: #4CAF50;
       /* Primary Green for links */
       font-weight: 500;
       display: inline-block; 
@@ -138,7 +138,7 @@
 
     .progress-bar {
       height: 100%;
-      background: #27AB83;
+      background: #4CAF50;
       /* Primary Green */
       transition: width 0.3s;
     }
@@ -149,7 +149,7 @@
     }
 
       .completed {
-      background: #27AB83 !important;
+      background: #4CAF50 !important;
       /* Completed green for savings */
     }
 
@@ -305,7 +305,7 @@
           <div class="item-details-row"> <span class="available-amount">₪${formatCurrency(totalgoals * 100)}</span></div>
         </div>
 
-        <div class="category" style="background-color: ${isOverBudget ? '#FDF2F3' : '#e6f7df'}; border-top: none;">
+        <div class="category" style="background-color: #e6f7df; border-top: none;">
           <div class="category-header">
             <span>Total gasto da renda do mês passado</span>
             <span class="${isOverBudget ? 'over-budget-text' : ''}">
@@ -316,11 +316,11 @@
             <div class="progress-bar ${isOverBudget ? 'over-budget' : ''}" style="width:${100 - percentage}%"></div>
           </div>
           <div class="item-details-row">
-            <span class="detail-text" style="color:${isOverBudget ? '#dc2626' : '#27AB83'}">
+            <span class="detail-text" style="color:${isOverBudget ? '#dc2626' : '#4CAF50'}">
               ${Math.max((100 - percentage).toFixed(0), 0)}% ${isOverBudget ? ' (Over Budget!)' : ''} restante
             </span>
             <span class="available-amount">
-              Lucro: <span style="color:${isOverBudget ? '#dc2626' : '#27AB83'}">₪${formatCurrency(lucro)}</span>
+              Lucro: <span style="color:${isOverBudget ? '#dc2626' : '#4CAF50'}">₪${formatCurrency(lucro)}</span>
             </span>
           </div>
         </div>
@@ -339,7 +339,7 @@
           const monthFormatted = month.toString().padStart(2, '0');
           categoriesDiv.innerHTML += `
       <a href="transactions.html?cat=${encodeURIComponent(item.name)}&month=${monthFormatted}">
-        <div class="category" style="background-color:${isOverBudget ? '#FDF2F3' : 'white'}">
+        <div class="category" style="background-color:${isOverBudget ? '#dc262614' : 'white'}">
           <div class="category-header">
             <span>${item.name}</span>
             <span class="${isOverBudget ? 'over-budget-text' : ''}">
@@ -354,7 +354,7 @@
                ${isOverBudget ? 'Over budget!' : `${Math.max((100 - percentage).toFixed(0), 0)}% restante`}
             </span>
             <span class="available-amount">
-              Disponível: <span style="color:${isOverBudget ? '#dc2626' : '#27AB83'}">₪${formatCurrency(item.balance)}</span>
+              Disponível: <span style="color:${isOverBudget ? '#dc2626' : '#4CAF50'}">₪${formatCurrency(item.balance)}</span>
             </span>
           </div>
         </div>
@@ -388,7 +388,7 @@
               <span class="detail-text">
                 ${percentage2.toFixed(0)}% ${isCompleted ? '(✔︎ Completo!)' : 'fundado'}
               </span>
-              <span class="available-amount" style="color: ${!isCompleted ? '#2294c1' : '#27AB83'}">
+              <span class="available-amount" style="color: ${!isCompleted ? '#2294c1' : '#4CAF50'}">
                 Disponível: ₪${formatCurrency(item.balance)}
               </span>
             </div>
@@ -422,7 +422,7 @@
               <span class="detail-text">
                 ${percentage2.toFixed(0)}% ${isCompleted ? '(✔︎ Completo!)' : 'fundado'}
               </span>
-              <span class="available-amount" style="color: ${!isCompleted ? '#2294c1' : '#27AB83'}">
+              <span class="available-amount" style="color: ${!isCompleted ? '#2294c1' : '#4CAF50'}">
                 Disponível: ₪${formatCurrency(item.balance)}
               </span>
             </div>
