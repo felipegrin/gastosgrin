@@ -294,7 +294,7 @@
       // Render summary
       const summaryDiv = document.getElementById("summary");
       const percentage = (totalSpent / fromLastMonth) * 100;
-      const isOverBudget = percentage > 100;
+      const isSummaryOverBudget = percentage > 100;
 
       summaryDiv.innerHTML = `
        <div id="divider" class="divider"></div>
@@ -305,22 +305,22 @@
           <div class="item-details-row"> <span class="available-amount">₪${formatCurrency(totalgoals * 100)}</span></div>
         </div>
 
-        <div class="category" style="background-color: ${isOverBudget ? '#FDF2F3' : '#e6f7df'}; border-top: none;">
+        <div class="category" style="background-color: ${isSummaryOverBudget ? '#FDF2F3' : '#e6f7df'}; border-top: none;">
           <div class="category-header">
             <span>Total gasto da renda do mês passado</span>
-            <span class="${isOverBudget ? 'over-budget-text' : ''}">
+            <span class="${isSummaryOverBudget ? 'over-budget-text' : ''}">
               ₪${formatCurrency(totalSpent)} / ₪${formatCurrency(fromLastMonth)}
             </span>
           </div>
           <div class="progress-container">
-            <div class="progress-bar ${isOverBudget ? 'over-budget' : ''}" style="width:${100 - percentage}%"></div>
+            <div class="progress-bar ${isSummaryOverBudget ? 'over-budget' : ''}" style="width:${100 - percentage}%"></div>
           </div>
           <div class="item-details-row">
-            <span class="detail-text" style="color:${isOverBudget ? '#dc2626' : '#27AB83'}">
-              ${Math.max((100 - percentage).toFixed(0), 0)}% ${isOverBudget ? ' (Over Budget!)' : ''} restante
+            <span class="detail-text" style="color:${isSummaryOverBudget ? '#dc2626' : '#27AB83'}">
+              ${Math.max((100 - percentage).toFixed(0), 0)}% ${isSummaryOverBudget ? ' (Over Budget!)' : ''} restante
             </span>
             <span class="available-amount">
-              Lucro: <span style="color:${isOverBudget ? '#dc2626' : '#27AB83'}">₪${formatCurrency(lucro)}</span>
+              Lucro: <span style="color:${isSummaryOverBudget ? '#dc2626' : '#27AB83'}">₪${formatCurrency(lucro)}</span>
             </span>
           </div>
         </div>
@@ -372,23 +372,24 @@
           goal2[1]?.amount ? goal2[1].amount * 100 : 1;
         const percentage2 = item.balance / goal3 * 100;
         const isCompleted = percentage2 > 99;
+        const isNegative = item.balance < 0;
         const monthFormatted = month.toString().padStart(2, '0');
 
         poupancasDiv.innerHTML += `
           <a href="transactions.html?cat=${item.name}&month=${monthFormatted}">
-          <div class="category">
+          <div class="category" style="background-color:${isNegative ? '#FDF2F3' : 'white'}">
             <div class="category-header">
               <span>${item.name}</span>
-              <span>₪${formatCurrency(Math.abs(item.balance))} / ₪${formatCurrency(Math.abs(goal3))}</span>
+              <span class="${isNegative ? 'over-budget-text' : ''}">₪${formatCurrency(Math.abs(item.balance))} / ₪${formatCurrency(Math.abs(goal3))}</span>
             </div>
             <div class="progress-container-poupanca">
-              <div class="progress-bar ${!isCompleted ? 'in-progress' : 'completed'}" style="width:${Math.min(percentage2, 100)}%"></div>
+              <div class="progress-bar ${isNegative ? 'over-budget' : (!isCompleted ? 'in-progress' : 'completed')}" style="width:${isNegative ? '100' : Math.min(percentage2, 100)}%"></div>
             </div>
             <div class="item-details-row">
-              <span class="detail-text">
-                ${percentage2.toFixed(0)}% ${isCompleted ? '(✔︎ Completo!)' : 'fundado'}
+              <span class="detail-text" style="${isNegative ? 'color: #dc2626;' : ''}">
+                ${isNegative ? 'Negativo!' : `${percentage2.toFixed(0)}% ${isCompleted ? '(✔︎ Completo!)' : 'fundado'}`}
               </span>
-              <span class="available-amount" style="color: ${!isCompleted ? '#2294c1' : '#27AB83'}">
+              <span class="available-amount" style="color: ${isNegative ? '#dc2626' : (!isCompleted ? '#2294c1' : '#27AB83')}">
                 Disponível: ₪${formatCurrency(item.balance)}
               </span>
             </div>
@@ -397,7 +398,7 @@
         `;
       });
 
-      // Render wislist
+      // Render wishlist
       const wishlistDiv = document.getElementById("wishlist");
       wishlistDiv.innerHTML = "<div id='divider' class='divider'></div><h2>Wish List</h2>";
       wishlist.forEach(item => {
@@ -406,23 +407,24 @@
           goal2[1]?.amount ? goal2[1].amount * 100 : 1;
         const percentage2 = item.balance / goal3 * 100;
         const isCompleted = percentage2 > 99;
+        const isNegative = item.balance < 0;
         const monthFormatted = month.toString().padStart(2, '0');
 
         wishlistDiv.innerHTML += `
           <a href="transactions.html?cat=${item.name}&month=${monthFormatted}">
-          <div class="category">
+          <div class="category" style="background-color:${isNegative ? '#FDF2F3' : 'white'}">
             <div class="category-header">
               <span>${item.name}</span>
-              <span>₪${formatCurrency(Math.abs(item.balance))} / ₪${formatCurrency(Math.abs(goal3))}</span>
+              <span class="${isNegative ? 'over-budget-text' : ''}">₪${formatCurrency(Math.abs(item.balance))} / ₪${formatCurrency(Math.abs(goal3))}</span>
             </div>
             <div class="progress-container-poupanca">
-              <div class="progress-bar ${!isCompleted ? 'in-progress' : 'completed'}" style="width:${Math.min(percentage2, 100)}%"></div>
+              <div class="progress-bar ${isNegative ? 'over-budget' : (!isCompleted ? 'in-progress' : 'completed')}" style="width:${isNegative ? '100' : Math.min(percentage2, 100)}%"></div>
             </div>
             <div class="item-details-row">
-              <span class="detail-text">
-                ${percentage2.toFixed(0)}% ${isCompleted ? '(✔︎ Completo!)' : 'fundado'}
+              <span class="detail-text" style="${isNegative ? 'color: #dc2626;' : ''}">
+                ${isNegative ? 'Negativo!' : `${percentage2.toFixed(0)}% ${isCompleted ? '(✔︎ Completo!)' : 'fundado'}`}
               </span>
-              <span class="available-amount" style="color: ${!isCompleted ? '#2294c1' : '#27AB83'}">
+              <span class="available-amount" style="color: ${isNegative ? '#dc2626' : (!isCompleted ? '#2294c1' : '#27AB83')}">
                 Disponível: ₪${formatCurrency(item.balance)}
               </span>
             </div>
